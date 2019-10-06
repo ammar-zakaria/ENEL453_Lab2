@@ -21,6 +21,12 @@ Signal busy: STD_LOGIC;
 signal response_valid_out_i1,response_valid_out_i2,response_valid_out_i3 : STD_LOGIC_VECTOR(0 downto 0);
 Signal bcd: STD_LOGIC_VECTOR(15 DOWNTO 0);
 Signal Q_temp1 : std_logic_vector(11 downto 0);
+Signal selector : STD_LOGIC;
+Signal raw_input : std_logic_vector(11 downto 0);
+Signal averager_input : std_logic_vector(11 downto 0);
+Signal m_output : std_logic_vector(11 downto 0);
+
+
 
 Component SevenSegment is
     Port( Num_Hex0,Num_Hex1,Num_Hex2,Num_Hex3,Num_Hex4,Num_Hex5 : in  STD_LOGIC_VECTOR (3 downto 0);
@@ -66,7 +72,17 @@ Component averager is
     EN  : in  std_logic; -- response_valid_out
     Q   : out std_logic_vector(11 downto 0)
     );
-  end Component;
+END Component;
+
+Component multiplexer is
+	port
+		(
+		 selector			: in std_logic;
+		 raw_input			: in std_logic_vector(11 downto 0);
+		 averager_input	: in std_logic_vector(11 downto 0); -- test shortening later with ,
+		 m_output			: out std_logic_vector(11 downto 0)
+		 );  
+END Component;
 
 begin
    Num_Hex0 <= bcd(3  downto  0); 
@@ -163,4 +179,12 @@ binary_bcd_ins: binary_bcd
       busy     => busy,                         
       bcd      => bcd         
       );
+
+mux: multiplexer
+	PORT MAP(
+		 selector			=> selector,
+		 raw_input			=> raw_input,
+		 averager_input	=> averager_input,
+		 m_output			=> m_output
+		);
 end Behavioral;
